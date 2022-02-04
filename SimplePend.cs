@@ -41,9 +41,30 @@ namespace Sim
         }
 
         //------------------------------------------------------------------------
-        // step: perform one integration step via RK4
+        // Fourth-Order Runge-Kutta Method
         //------------------------------------------------------------------------
-        
+        public void runge_kutta(double dt)
+        {
+            rhsFunc(x,f);
+
+            double[,] k = new double[2,4]; // k values for theta and omega
+            
+            k[0,0] = x[1];
+            k[0,1] = x[1]+0.5*k[0,0]*dt;
+            k[0,2] = x[1]+0.5*k[0,1]*dt;
+            k[0,3] = x[1]+k[0,2]*dt;
+            k[1,0] = x[1];
+            k[1,1] = x[1]+0.5*k[0,0]*dt;
+            k[1,2] = x[1]+0.5*k[0,1]*dt;
+            k[1,3] = x[1]+k[0,2]*dt;
+
+            int i;
+            for (i=0;i<n;++i)
+            {
+                x[i] = x[i]+(1.0/6.0)*(k[i,0]+2.0*k[i,1]+2.0*k[i,2]+k[i,3])*dt;
+            }
+        }
+
         //------------------------------------------------------------------------
         // rhsFunc: function to calculate rhs of pendulum ODEs
         //------------------------------------------------------------------------
