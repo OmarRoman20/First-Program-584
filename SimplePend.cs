@@ -45,23 +45,37 @@ namespace Sim
         //------------------------------------------------------------------------
         public void runge_kutta(double dt)
         {
-            rhsFunc(x,f);
-
-            double[,] k = new double[2,4]; // k values for theta and omega
+            double[] k1 = new double[n]; // k1 values for theta and omega
+            double[] k2 = new double[n]; // k2 values for theta and omega
+            double[] k3 = new double[n]; // k3 values for theta and omega
+            double[] k4 = new double[n]; // k4 values for theta and omega
+            double[] mid1 = new double[n];
+            double[] mid2 = new double[n];
+            double[] end = new double[n];
             
-            k[0,0] = x[1];
-            k[0,1] = x[1]+0.5*k[0,0]*dt;
-            k[0,2] = x[1]+0.5*k[0,1]*dt;
-            k[0,3] = x[1]+k[0,2]*dt;
-            k[1,0] = x[1];
-            k[1,1] = x[1]+0.5*k[0,0]*dt;
-            k[1,2] = x[1]+0.5*k[0,1]*dt;
-            k[1,3] = x[1]+k[0,2]*dt;
+            rhsFunc(x,f);
+            k1 = f;
 
             int i;
             for (i=0;i<n;++i)
             {
-                x[i] = x[i]+(1.0/6.0)*(k[i,0]+2.0*k[i,1]+2.0*k[i,2]+k[i,3])*dt;
+                mid1[i] = x[i]+0.5*k1[i]*dt;
+            }
+            rhsFunc(mid1,k2);
+            for (i=0;i<n;++i)
+            {
+                mid2[i] = x[i]+0.5*k2[i]*dt;
+            }
+            rhsFunc(mid2,k3);
+            for (i=0;i<n;++i)
+            {
+                end[i] = x[i]+k3[i]*dt;
+            }
+            rhsFunc(end,k4);
+
+            for (i=0;i<n;++i)
+            {
+                x[i] = x[i]+(1.0/6.0)*(k1[i]+2.0*k2[i]+2.0*k3[i]+k4[i])*dt;
             }
         }
 
